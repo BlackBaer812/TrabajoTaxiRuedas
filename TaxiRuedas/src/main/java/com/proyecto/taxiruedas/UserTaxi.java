@@ -13,9 +13,9 @@ import java.io.Serializable;
  */
 public abstract class UserTaxi implements Serializable, Comparable{
     /**
-     * nombre de usuario
+     * apodo de usuario
      */
-    protected String nombre;
+    protected String apodo;
     /**
      * clave del usuario (Se deberá de implementar una en criptación)
      */
@@ -23,11 +23,11 @@ public abstract class UserTaxi implements Serializable, Comparable{
     
     /**
      * Constructor del usuario
-     * @param nombre nombre del usuario
+     * @param nombre apodo del usuario
      * @param clave contraseña del usuario
      */
     public UserTaxi(String nombre, String clave){
-        this.nombre = nombre;
+        this.apodo = nombre;
         this.key = clave;
     }
     
@@ -38,15 +38,15 @@ public abstract class UserTaxi implements Serializable, Comparable{
      */
     @Override
     public boolean equals(Object o){
-        return this.nombre.equals(((UserTaxi) o).getNombre()) && this.key.equals(((UserTaxi) o).getKey());
+        return this.apodo.equals(((UserTaxi) o).getNombre()) && this.key.equals(((UserTaxi) o).getKey());
     }
 
     /**
-     * Nos devuelve el nombre del usuario
-     * @return String nombre de usuario
+     * Nos devuelve el apodo del usuario
+     * @return String apodo de usuario
      */
     public String getNombre() {
-        return nombre;
+        return apodo;
     }
 
     /**
@@ -59,10 +59,10 @@ public abstract class UserTaxi implements Serializable, Comparable{
 
     /**
      * Nombre nuevo del usuario
-     * @param nombre String nuevo nombre
+     * @param nombre String nuevo apodo
      */
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.apodo = nombre;
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class UserTaxi implements Serializable, Comparable{
      */
     @Override
     public int compareTo(Object o) {
-        return this.nombre.compareTo(((UserTaxi) o).getNombre());
+        return this.apodo.compareTo(((UserTaxi) o).getNombre());
     }
     
     
