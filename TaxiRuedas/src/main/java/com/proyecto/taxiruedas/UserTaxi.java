@@ -83,5 +83,5 @@ public abstract class UserTaxi implements Serializable, Comparable{
         return this.apodo.compareTo(((UserTaxi) o).getNombre());
     }
     
-    
+    public abstract String tipo();
 }
