@@ -26,7 +26,7 @@ public class TaxiRuedas {
         //anadir(userTaxi);
         
         userTaxi.put("Ma", new Usuario("Ma","m","Marc","RC"));
-        userTaxi.put("An", new Taxista("An","a","Andrea","MM"));
+        userTaxi.put("An", new Taxista("An","a","Andrea","MM",true,"zona1"));
         
         System.out.println(userTaxi.get("Ma"));
         
