@@ -49,11 +49,16 @@ public class TaxiRuedas {
             switch(op){
                 case 1->{
                     while(fallos<3){
-                        if(iSesion(conexion)){
-                            
-                        }else{
-                            System.out.println("Ese usuario no existe");
-                            fallos++;
+                        switch(iSesion(conexion)){
+                            case 0 ->{
+                                
+                            }
+                            case 1 ->{
+                                
+                            }
+                            case 2 ->{
+                                
+                            }
                         }
                     }
                 }
@@ -68,10 +73,11 @@ public class TaxiRuedas {
                 }
             }
         }while(op!=4);
+        cerrarConexion(conexion);
     }
     
-    public static boolean iSesion(Connection conexion){
-        boolean sal = false;
+    public static int iSesion(Connection conexion){
+        int sal = 0;
         System.out.print("Usuario: ");
         String usu = new Scanner(System.in).useLocale(Locale.US).nextLine();
         usu = usu.toLowerCase();
@@ -80,7 +86,15 @@ public class TaxiRuedas {
             String clave = new Scanner(System.in).useLocale(Locale.US).nextLine();
             clave = clave.toLowerCase();
             if(existeReg(conexion, clave,"usuario","clave")){
-                sal=true;
+                sal=1;
+            }
+        }
+        else if(existeReg(conexion,usu,"taxista","apodo")){
+            System.out.print("Contraseña: ");
+            String clave = new Scanner(System.in).useLocale(Locale.US).nextLine();
+            clave = clave.toLowerCase();
+            if(existeReg(conexion, clave,"taxista","clave")){
+                sal=2;
             }
         }
         return sal;
