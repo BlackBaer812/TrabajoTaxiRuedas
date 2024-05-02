@@ -53,7 +53,7 @@ public class Taxista extends UserTaxi implements Serializable{
      * @param nombre nombre real
      * @param ape apellidos real
      * @param disp disponibilidad
-     * @param zone zona en la que se encuenta
+     * @param z zona en la que se encuenta
      */
     public Taxista(String apodo, String clave, String nombre, String ape, boolean disp, String z) {
         super(apodo, clave);
