@@ -28,9 +28,14 @@ public class Taxista extends UserTaxi implements Serializable{
     private boolean disp;
     
     /**
-     * 
+     * Zona en la que esta el taxista disponible
      */
     private Zonas lugar;
+    
+    /**
+     * Matricula del taxi que lleva en ese momento
+     */
+    private String matTaxi;
     
     /**
      * Construtor de la clase Usuario, al extender de UserTaxi usa su constructor

@@ -23,6 +23,11 @@ public class Usuario extends UserTaxi implements Serializable{
     private String apellidos;
     
     /**
+     * Email del usuario
+     */
+    private String email;
+    
+    /**
      * Lugar en el que se encuentra el cliente
      */
     private Zonas lugar;
@@ -34,11 +39,13 @@ public class Usuario extends UserTaxi implements Serializable{
      * @param clave contraseña que tiene en la aplicación
      * @param nombre Nombre del usuario
      * @param ape Apellidos del usuario
+     * @param email Email del usuario
      */
-    public Usuario(String apodo, String clave, String nombre, String ape) {
+    public Usuario(String apodo, String clave, String nombre, String ape, String email) {
         super(apodo, clave);
         this.nombre = nombre;
         this.apellidos = ape;
+        this.email = email;
     }
 
     /**
@@ -49,8 +56,9 @@ public class Usuario extends UserTaxi implements Serializable{
      * @param nombre Nombre del usuario
      * @param ape Apellidos del usuario
      * @param z Zona en la que se encuentra el usuario
+     * @param email Email del usuario
      */
-    public Usuario(String apodo, String clave, String nombre, String ape, String z) {
+    public Usuario(String apodo, String clave, String nombre, String ape, String z, String email) {
         super(apodo, clave);
         this.nombre = nombre;
         this.apellidos = ape;
@@ -103,6 +111,61 @@ public class Usuario extends UserTaxi implements Serializable{
      */
     @Override
     public String toString(){
-        return "Apodo: " + this.apodo + "\t|Nombre: " + this.nombre + "\t|Apellidos: " + this.apellidos + "\t|Zona: " + this.lugar.toString();
+        return "Apodo: " + this.apodo + "\t|Nombre: " + this.nombre + "\t|Apellidos: " + this.apellidos +
+                "\t|Email: " + this.email + "\t|Zona: " + this.lugar.toString();
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getLugarS() {
+        return lugar.name();
+    }
+    
+    public Zonas getLugar() {
+        return lugar;
+    }
+
+    public void setLugar(Zonas lugar) {
+        this.lugar = lugar;
+    }
+
+    public String getApodo() {
+        return apodo;
+    }
+
+    public void setApodo(String apodo) {
+        this.apodo = apodo;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+    
+    
 }
