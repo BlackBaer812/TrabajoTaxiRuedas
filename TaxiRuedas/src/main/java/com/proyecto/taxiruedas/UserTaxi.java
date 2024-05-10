@@ -32,6 +32,14 @@ public abstract class UserTaxi implements Serializable, Comparable{
     }
     
     /**
+     * Constructor para usuario al iniciar la sesión
+     * @param nombre apodo del usuario
+     */
+    public UserTaxi(String nombre){
+        this.apodo = nombre;
+    }
+    
+    /**
      * Devuelve si un usuario es igual a otro ya guardado
      * @param o se le introduce el objeto a comparar
      * @return true si coinciden usuario y clave, false si no coinciden usuario y clave

@@ -96,6 +96,52 @@ public class Usuario extends UserTaxi implements Serializable{
         }
     }
     
+    
+    /**
+     * Constructor sin email ni clave para el inicio de la sesión
+     * @param apodo apodo del usuario que ha iniciado sesión
+     * @param nombre nombre del usuario que ha iniciado sesión
+     * @param ape apellido del usuario que ha iniciado sesión
+     * @param z la zona donde se encuentra ahora mismo
+     */
+    public Usuario(String apodo, String nombre, String ape, String z) {
+        super(apodo);
+        this.nombre = nombre;
+        this.apellidos = ape;
+        switch(z){
+            case "zona1"->{
+                this.lugar = Zonas.zona1;
+            }
+            case "1"->{
+                this.lugar = Zonas.zona1;
+            }
+            case "zona2"->{
+                this.lugar = Zonas.zona2;
+            }
+            case "2"->{
+                this.lugar = Zonas.zona2;
+            }
+            case "zona3"->{
+                this.lugar = Zonas.zona3;
+            }
+            case "3"->{
+                this.lugar = Zonas.zona3;
+            }
+            case "zona4"->{
+                this.lugar = Zonas.zona4;
+            }
+            case "4"->{
+                this.lugar = Zonas.zona4;
+            }
+            case "zona5"->{
+                this.lugar = Zonas.zona5;
+            }
+            case "5"->{
+                this.lugar = Zonas.zona5;
+            }
+        }
+    }
+    
     /**
      * Clase heredada de UserTaxi, nos dice que tipo es (Usuario o Taxista)
      * @return string "usuario"

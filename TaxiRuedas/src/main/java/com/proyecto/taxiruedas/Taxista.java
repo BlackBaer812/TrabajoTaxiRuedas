@@ -52,6 +52,53 @@ public class Taxista extends UserTaxi implements Serializable{
     }
     
     /**
+     * Constructor para inicio de sesion de taxista
+     * @param apodo apodo del taxista que inicia sesion
+     * @param nombre nombre del taxista al iniciar sesion
+     * @param ape apellidos del taxista al iniciar sesion
+     * @param z zona en la que se encuentra
+     * @param mTaxi matricula taxi
+     */
+    public Taxista(String apodo, String nombre, String ape, String z, String mTaxi) {
+        super(apodo);
+        this.nombre = nombre;
+        this.apellidos = ape;
+        switch(z){
+            case "zona1"->{
+                this.lugar = Zonas.zona1;
+            }
+            case "1"->{
+                this.lugar = Zonas.zona1;
+            }
+            case "zona2"->{
+                this.lugar = Zonas.zona2;
+            }
+            case "2"->{
+                this.lugar = Zonas.zona2;
+            }
+            case "zona3"->{
+                this.lugar = Zonas.zona3;
+            }
+            case "3"->{
+                this.lugar = Zonas.zona3;
+            }
+            case "zona4"->{
+                this.lugar = Zonas.zona4;
+            }
+            case "4"->{
+                this.lugar = Zonas.zona4;
+            }
+            case "zona5"->{
+                this.lugar = Zonas.zona5;
+            }
+            case "5"->{
+                this.lugar = Zonas.zona5;
+            }
+        }
+        this.matTaxi = mTaxi;
+    }
+    
+    /**
      * Constructor para tener toda la información de los taxistas
      * @param apodo apodo en la aplicacion
      * @param clave clave usada en la aplicacion
@@ -115,6 +162,16 @@ public class Taxista extends UserTaxi implements Serializable{
      */
     @Override
     public String toString(){
-        return "Apodo: " + this.apodo + "\t|Nombre: " + this.nombre + "\t|Apellidos: " + this.apellidos + "\t|Disponibilidad: " + this.disp + "\t|Zona: " + this.lugar.toString();
+        
+        String sal = "Apodo: " + this.apodo + "\t|Nombre: " + this.nombre + "\t|Apellidos: " + this.apellidos;
+        
+        if(this.lugar!= null){
+            sal += "\t|Zona: " + this.lugar.toString();
+        }
+        
+        if(this.matTaxi!=null){
+            sal += "\t|Matricula: " + this.matTaxi;
+        }
+        return sal;
     }
 }
