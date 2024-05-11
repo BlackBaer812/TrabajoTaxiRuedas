@@ -146,6 +146,12 @@ public class Taxista extends UserTaxi implements Serializable{
         }
         
     }
+
+    public String getApodo() {
+        return apodo;
+    }
+    
+    
     
     /**
      * Clase heredada de UserTaxi, nos dice que tipo es (Usuario o Taxista)

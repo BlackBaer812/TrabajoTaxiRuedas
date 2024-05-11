@@ -54,7 +54,7 @@ public class Reserva implements Serializable{
      * @param zI Zona desde donde se inicia el viaje
      * @param zF Zona donde terminara el viaje
      * @param acept Si la reserva ha sido aceptada o no
-     * @param
+     * @param tTax Tipo de taxi pedido
      */
     public Reserva(Integer id, String apU,String zI, String zF, int acept, TipoTaxi tTax){
         this.id=id;
@@ -141,7 +141,7 @@ public class Reserva implements Serializable{
 
     @Override
     public String toString() {
-        return "Apodo usuario: " + this.apU + "\t|Fecha de reserva: " + this.h.toString() + "\r";
+        return "Apodo usuario: " + this.apU + "\t|Fecha de reserva: " + this.h.toString() + "\r" + "\t|Tipo de taxi: " + this.tTaxi.toString();
     }
     
     
