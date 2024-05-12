@@ -60,7 +60,7 @@ public class Taxi implements Serializable{
     
     @Override
     public String toString(){
-        String sal = "\t|Matricula: " + this.matricula + "\t|Tipo: " + this.tipo.toString();
+        String sal = "Matricula: " + this.matricula + "\t|Tipo: " + this.tipo.toString();
         if(this.apodoT != null){
             sal += "\t|Taxista: " + this.apodoT;
         }

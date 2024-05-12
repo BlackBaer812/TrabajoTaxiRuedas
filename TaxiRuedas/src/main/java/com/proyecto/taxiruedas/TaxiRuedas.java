@@ -225,7 +225,7 @@ public class TaxiRuedas {
                 }
                 case 2->{ //Lista de taxis
                     List <Taxi> lTaxis = listaTaxis(conexion,"taxi",u1);
-                    Arrays.deepToString(lTaxis.toArray());
+                    System.out.println(lTaxis);
                 }
                 case 3->{ //Modificar taxi
                     modTaxi(conexion);
@@ -540,15 +540,10 @@ public class TaxiRuedas {
         System.out.println("¿Que registro quiere eleminar?");
         String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
         if(existeReg(conexion,mat,"taxi","matricula")){
-            String sql=String.format("DELETE FROM %s WHERE \'%s\' = \'%s\'",tabla, columna, mat);
+            String sql=String.format("DELETE FROM %s WHERE %s = \'%s\'",tabla, columna, mat);
             
             try{
                 PreparedStatement pstmt = conexion.prepareCall(sql);
-                /*
-                pstmt.setString(1, tabla);
-                pstmt.setString(2, columna);
-                pstmt.setString(3, mat);
-                */
                 System.out.println(pstmt);
                 pstmt.executeUpdate();
                 System.out.println("Registro borrado correctamente de " + tabla);
