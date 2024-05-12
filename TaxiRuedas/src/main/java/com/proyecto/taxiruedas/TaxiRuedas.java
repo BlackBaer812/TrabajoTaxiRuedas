@@ -114,6 +114,7 @@ public class TaxiRuedas {
                 }
                 case 4 ->{ //Salir del programa
                     System.out.println("Saliendo del programa.");
+                    cerrarConexion(conexion);
                 }
                 default ->{
                     System.out.println("Esta opción " + op + " no esta disponible.");
@@ -196,6 +197,7 @@ public class TaxiRuedas {
                 case 5 ->{//Cerrar sesion
                     System.out.println("Saliendo de la sesión.");
                     noDisponible(conexion,apo);
+                    cerrarConexion(conexion);
                 }
                 default->{
                     System.out.println("Opcion no aceptada");
@@ -226,10 +228,10 @@ public class TaxiRuedas {
                     Arrays.deepToString(lTaxis.toArray());
                 }
                 case 3->{ //Modificar taxi
-                    
+                    modTaxi(conexion);
                 }
                 case 4->{ //Eliminar taxi
-                    
+                    eliminarReg(conexion,"taxi","matricula");
                 }
                 case 5->{
                     System.out.println("Volviendo al menu de usuario.");
@@ -475,6 +477,91 @@ public class TaxiRuedas {
     }
     
     /**
+     * Funcion para modificar el tipo de taxi que es
+     * @param conexion conexion a la base de datos
+     */
+    public static void modTaxi(Connection conexion){
+        System.out.println("¿Que taxi quiere modificar? (Introduzca la matricula)");
+        String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
+        if(existeReg(conexion,mat,"taxi","matricula")){
+            System.out.println("¿Qué tipo de vehículo es?");
+            System.out.println("1. Estandar");
+            System.out.println("2. Lujo");
+            System.out.println("3. Entrega");
+            System.out.print("Introduce una opción:");
+            int op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            String tipo = "";
+            switch(op){
+                case 1->{
+                    tipo = "estandar";
+                }
+                case 2->{
+                    tipo = "lujo";
+                }
+                case 3->{
+                    tipo = "entrega";
+                }
+                default ->{
+                    System.out.println("Opcion no aceptada");
+                }
+            }
+            
+            if(tipo!= ""){
+                String sql=String.format("UPDATE taxi SET tipo=? WHERE matricula=?");
+                try{
+                    PreparedStatement pstmt = conexion.prepareCall(sql);
+
+                    pstmt = conexion.prepareStatement(sql);
+                    pstmt.setString(1, tipo);
+                    pstmt.setString(2, mat);
+
+                    pstmt.executeUpdate();
+                }catch(SQLException e){
+                    e.printStackTrace();
+                }
+                System.out.println("Modificación realizada con exito."); 
+            }
+            else{
+                System.out.println("No se ha podido realizar la modificación porque el tipo especificado no existe.");
+            }
+        }
+        else{
+            System.out.println("Ese taxi no existe");
+        }
+    }
+    
+    /**
+     * Elimina un registro de una tabla
+     * @param conexion conexion a la base de datos
+     * @param tabla Tabla de donde borramos
+     * @param columna Columna de PK
+     */
+    public static void eliminarReg(Connection conexion,String tabla, String columna){
+        System.out.println("¿Que registro quiere eleminar?");
+        String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
+        if(existeReg(conexion,mat,"taxi","matricula")){
+            String sql=String.format("DELETE FROM %s WHERE \'%s\' = \'%s\'",tabla, columna, mat);
+            
+            try{
+                PreparedStatement pstmt = conexion.prepareCall(sql);
+                /*
+                pstmt.setString(1, tabla);
+                pstmt.setString(2, columna);
+                pstmt.setString(3, mat);
+                */
+                System.out.println(pstmt);
+                pstmt.executeUpdate();
+                System.out.println("Registro borrado correctamente de " + tabla);
+            }catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+        else{
+            System.out.println("El registro no existe.");
+        }
+    }
+    
+    /**
      * 
      * @param conex
      * @param u1
@@ -614,12 +701,12 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conex
-     * @param apo
-     * @param tabla
-     * @param nomCol
-     * @return 
+     * Funcion para saber si existe un registro
+     * @param conex conexión a la base de datos
+     * @param apo variable a consultar en tipo string
+     * @param tabla tabla donde se consulta la variable
+     * @param nomCol nombre de la columna donde esta la variable
+     * @return true si esta, false si no esta
      */
     public static boolean existeReg(Connection conex, String apo, String tabla, String nomCol){
         String sql=String.format("SELECT COUNT(*) FROM %s WHERE %s = \'%s\'",tabla, nomCol, apo);
@@ -649,6 +736,8 @@ public class TaxiRuedas {
      * @return 
      */
     public static Connection conectarBD(){
+        
+        
         
         Connection conexion = null;
         
