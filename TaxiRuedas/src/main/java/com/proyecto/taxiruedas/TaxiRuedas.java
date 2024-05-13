@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -186,7 +187,10 @@ public class TaxiRuedas {
                 }
                 
                 case 2 ->{//Lista de reservas
-                
+                    List <Reserva> lResev = listaReservas(conexion,"reserva");
+                    for(Reserva reserv:lResev){
+                        System.out.println(reserv);
+                    }
                 }
                 case 3 ->{//Lista de viajes
                     
@@ -376,6 +380,43 @@ public class TaxiRuedas {
         }catch(SQLException e){
             e.printStackTrace();
         } 
+    }
+    
+    /**
+     * Función para crear la lista de reservas actuales
+     * @param conexion conexión a la base de datos
+     * @param tabla tabla donde miramos
+     * @return Lista de las reservas
+     */
+    public static List<Reserva> listaReservas(Connection conexion, String tabla){
+        List<Reserva> sal = new ArrayList<>();
+        String sql = String.format("SELECT * FROM %s WHERE Aceptado = 0" , tabla);
+        /*
+        //Esta forma es para hacerlo como nos lo pide otro
+        String tabla = "EMPLEADOS";
+        String sql2 = String.format("SELECT * FROM %S", tabla);
+        */
+        try{
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            ResultSet res = pstmt.executeQuery();
+            while(res.next()){
+                int id = res.getInt("ID");
+                String apodo = res.getString("apodo");
+                DateTimeFormatter us = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate fecha = LocalDate.parse(res.getString("fecha"),us);
+                String zI = res.getString("ZonaInicio");
+                String zF = res.getString("ZonaFinal");
+                String tipo = res.getString("tipotaxi");
+                if(tipo != null){
+                    Reserva e = new Reserva (id,apodo,fecha,zI,zF,tipo);
+                    sal.add(e);
+                }
+                
+            }
+        }catch(SQLException e){
+            System.out.println("e.getMessage()");
+        }
+        return sal;
     }
     
     
