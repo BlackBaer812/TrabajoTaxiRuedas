@@ -38,8 +38,8 @@ public class TaxiRuedas {
     /*************************************************/
     
     /**
-     * 
-     * @param conexion 
+     * login para iniciar sesión, crear cuenta o recuperar cuenta (no programado aún)
+     * @param conexion conexión a la base de datos
      */
     public static void login(Connection conexion){
         int op;
@@ -133,7 +133,7 @@ public class TaxiRuedas {
      * @param apo apodo del usuario 
      */
     public static void menuUsu(Connection conexion,String apo){
-        Usuario u1 = selectUsu(conexion, "usuario",apo);
+        Usuario u1 = selectUsu(conexion,apo);
         int op;
         do{
             System.out.println("Menu Usuario");
@@ -149,7 +149,7 @@ public class TaxiRuedas {
                     crearReserva(conexion,u1);
                 }
                 case 2 ->{//Listado de taxistas
-                    List<Taxista> lTaxista = listaTaxistas(conexion,"Taxista");
+                    List<Taxista> lTaxista = listaTaxistas(conexion);
                     Arrays.deepToString(lTaxista.toArray());
                 }
                 case 3 ->{//Historial de viajes (no reservas)
@@ -168,16 +168,24 @@ public class TaxiRuedas {
         }while(op != 5);
     }
     
+    /**
+     * Menu taxista para adminsitrar sus acciones
+     * @param conexion conexión a la base de datos
+     * @param apo apodo del taxista
+     */
     public static void menuTaxista(Connection conexion,String apo){
-        Taxista u1 = selectTaxista(conexion, "taxista",apo);
+        Taxista u1 = selectTaxista(conexion, apo);
         int op;
+        
         do{
             System.out.println("Menu Usuario");
             System.out.println("1. Menu taxi");
             System.out.println("2. Lista de reservas");
-            System.out.println("3. Historial de viajes.");
-            System.out.println("4. Lista de comentarios.");
-            System.out.println("5. Cerrar Sesion");
+            System.out.println("3. Aceptar reserva.");
+            System.out.println("4. Finalizar viaje.");
+            System.out.println("5. Historial de viajes.");
+            System.out.println("6. Lista de comentarios.");
+            System.out.println("7. Cerrar Sesion");
             System.out.print("Introduce una opción: ");
             op = new Scanner(System.in).useLocale(Locale.US).nextInt();
             switch(op){
@@ -192,13 +200,23 @@ public class TaxiRuedas {
                         System.out.println(reserv);
                     }
                 }
-                case 3 ->{//Lista de viajes
+                case 3 ->{//Aceptar viaje
+                    System.out.println("¿Qué viaje quiere aceptar? (ID del viaje)");
+                    int idR = new Scanner(System.in).useLocale(Locale.US).nextInt();
+                    System.out.println("¿Qué vehiculo va a usar (Matrícula)?");
+                    String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
+                    aceptReserva(conexion,u1,mat,idR);
+                }
+                case 4 ->{//Finalizar viaje aceptado
                     
                 }
-                case 4 ->{//Lista de comentarios
+                case 5 ->{//Lista de viajes
                     
                 }
-                case 5 ->{//Cerrar sesion
+                case 6 ->{//Lista de comentarios
+                    
+                }
+                case 7 ->{//Cerrar sesion
                     System.out.println("Saliendo de la sesión.");
                     noDisponible(conexion,apo);
                     cerrarConexion(conexion);
@@ -207,9 +225,14 @@ public class TaxiRuedas {
                     System.out.println("Opcion no aceptada");
                 }
             }
-        }while(op != 5);
+        }while(op != 7);
     }
     
+    /**
+     * Menu del taxista para administrar sus taxis
+     * @param conexion Conexión a la base de datos
+     * @param u1 Usuario que se a conectado al menu
+     */
     public static void menuTaxi(Connection conexion, Taxista u1){
         
         int op;
@@ -228,8 +251,10 @@ public class TaxiRuedas {
                     System.out.println("Taxi creado.");
                 }
                 case 2->{ //Lista de taxis
-                    List <Taxi> lTaxis = listaTaxis(conexion,"taxi",u1);
-                    System.out.println(lTaxis);
+                    List <Taxi> lTaxis = listaTaxis(conexion,u1);
+                    for(Taxi tax:lTaxis){
+                        System.out.println(tax);
+                    }
                 }
                 case 3->{ //Modificar taxi
                     modTaxi(conexion);
@@ -282,20 +307,15 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conexion
-     * @param tabla
-     * @param usu
+     * Crea el objeto de usuario que se va a usar
+     * @param conexion conexión a la base de datos
+     * @param usu apodo del usuario que ha iniciado sesión
      * @return usuario para poder acceder a su zona
      */
-    public static Usuario selectUsu(Connection conexion, String tabla, String usu){
+    public static Usuario selectUsu(Connection conexion, String usu){
         Usuario e = null;
-        String sql = String.format("SELECT * FROM %s WHERE apodo = \"%s\"", tabla,usu);
-        /*
-        //Esta forma es para hacerlo como nos lo pide otro
-        String tabla = "EMPLEADOS";
-        String sql2 = String.format("SELECT * FROM %S", tabla);
-        */
+        String sql = String.format("SELECT * FROM usuario WHERE apodo = \"%s\"",usu);
+        
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
             ResultSet res = pstmt.executeQuery();
@@ -313,15 +333,14 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conexion
-     * @param tabla
-     * @param usu
-     * @return taxista creado para saber quien es y poder acceder a su zona
+     * Crea el objeto Taxista que ha iniciado sesión
+     * @param conexion conexión con base de datos
+     * @param usu apodo del taxista que ha iniciado sesión
+     * @return taxista que ha iniciado sesión para saber quien es y poder acceder a su zona
      */
-    public static Taxista selectTaxista(Connection conexion, String tabla, String usu){
+    public static Taxista selectTaxista(Connection conexion, String usu){
         Taxista e = null;
-        String sql = String.format("SELECT * FROM %s WHERE apodo = \"%s\"", tabla,usu);
+        String sql = String.format("SELECT * FROM taxista WHERE apodo = \"%s\"",usu);
         /*
         //Esta forma es para hacerlo como nos lo pide otro
         String tabla = "EMPLEADOS";
@@ -341,6 +360,17 @@ public class TaxiRuedas {
                 ex.printStackTrace();
             }
         return e;
+    }
+    
+    /**
+     * Función para aceptar una reserva
+     * @param conexion Conexión a la base de datos
+     * @param u1 taxista que acepta los viajes
+     * @param mat amtricula del vehiculo que realizara el viaje
+     * @param idReserva id de la reserva
+     */
+    public static void aceptReserva(Connection conexion, Taxista u1, String mat, int idReserva){
+        String sql = "CALL aceptar_reserva (" + u1.getApodo() + "," + mat + ","+ idReserva +")";
     }
     
     /**
@@ -391,11 +421,7 @@ public class TaxiRuedas {
     public static List<Reserva> listaReservas(Connection conexion, String tabla){
         List<Reserva> sal = new ArrayList<>();
         String sql = String.format("SELECT * FROM %s WHERE Aceptado = 0" , tabla);
-        /*
-        //Esta forma es para hacerlo como nos lo pide otro
-        String tabla = "EMPLEADOS";
-        String sql2 = String.format("SELECT * FROM %S", tabla);
-        */
+
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
             ResultSet res = pstmt.executeQuery();
@@ -419,15 +445,16 @@ public class TaxiRuedas {
         return sal;
     }
     
-    
-    public static List<Taxi> listaTaxis(Connection conexion, String tabla, Taxista u1){
+    /**
+     * Funcion para crear una lista de taxis de un mismo taxista
+     * @param conexion conexión a la base de datos
+     * @param u1 usuario por el que buscaremos
+     * @return Lista de taxis pertenecientes a un taxista
+     */
+    public static List<Taxi> listaTaxis(Connection conexion, Taxista u1){
         List<Taxi> sal = new ArrayList<>();
-        String sql = String.format("SELECT matricula,tipo FROM %s WHERE apodotaxi = \'%s\'" , tabla, u1.getApodo());
-        /*
-        //Esta forma es para hacerlo como nos lo pide otro
-        String tabla = "EMPLEADOS";
-        String sql2 = String.format("SELECT * FROM %S", tabla);
-        */
+        String sql = String.format("SELECT matricula,tipo FROM taxi WHERE apodotaxi = \'%s\'" , u1.getApodo());
+
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
             ResultSet res = pstmt.executeQuery();
@@ -444,19 +471,15 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conexion
-     * @param tabla
-     * @return 
+     * Función para crear una lista de taxistas
+     * @param conexion conexión a la base de datos
+
+     * @return devuelve una lista de taxistas disponibles
      */
-    public static List<Taxista> listaTaxistas(Connection conexion, String tabla){
+    public static List<Taxista> listaTaxistas(Connection conexion){
         List<Taxista> sal = new ArrayList<>();
-        String sql = String.format("SELECT apodo,nombre,apellidos,zona FROM %s", tabla);
-        /*
-        //Esta forma es para hacerlo como nos lo pide otro
-        String tabla = "EMPLEADOS";
-        String sql2 = String.format("SELECT * FROM %S", tabla);
-        */
+        String sql = String.format("SELECT apodo,nombre,apellidos,zona FROM taxista where disponible = 1");
+
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
             ResultSet res = pstmt.executeQuery();
@@ -465,8 +488,7 @@ public class TaxiRuedas {
                 String nombre = res.getString("nombre");
                 String ape = res.getString("apellidos");
                 String z = res.getString("zona");
-                String mat = res.getString("mtaxi");
-                Taxista e = new Taxista (apodo,nombre,ape,z,mat);
+                Taxista e = new Taxista (apodo,nombre,ape,z);
                 sal.add(e);
             }
         }catch(SQLException e){
@@ -475,6 +497,11 @@ public class TaxiRuedas {
         return sal;
     }
     
+    /**
+     * Funcion para crear un taxi relacionado con un taxista
+     * @param conex conexión a la base de datos
+     * @param u1 Taxista que crea el taxi
+     */
     public static void crearTaxi(Connection conex, Taxista u1){
         System.out.print("Matricula: ");
         String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
@@ -633,8 +660,6 @@ public class TaxiRuedas {
         
         LocalDate ahora = LocalDate.now();
         
-        
-        //INSERT INTO `reserva`(`ID`, `apodo`, `fecha`, `ZonaInicio`, `ZonaFinal`, `Aceptado`) VALUES 
         String sql=String.format("INSERT INTO reserva(apodo, fecha, ZonaInicio, ZonaFinal, aceptado,tipotaxi) "
                 + "VALUES (?,?,?,?,?,?)");
         try{
@@ -768,7 +793,7 @@ public class TaxiRuedas {
     /*************************************************/
     
     /**
-     * 
+     * Conecta a una base de datos que le indiques
      * @return 
      */
     public static Connection conectarBD(){
