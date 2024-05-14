@@ -54,12 +54,74 @@ public class Viaje {
      * @param aTaxista apodo del taxista
      * @param mTaxi matricula del taxi con el que se realizara el viaje
      */
-    public Viaje(int ID, String aUsu, LocalDate f, Zonas zI, Zonas zF, String aTaxista, String mTaxi){
+    public Viaje(int ID, String aUsu, LocalDate f, String zI, String zF, String aTaxista, String mTaxi){
         this.id = ID;
         this.apodo_usu =  aUsu;
         this.fecha = f;
-        this.zInicio = zI;
-        this.zFinal = zF;
+        switch(zI){
+            case "zona1"->{
+                this.zInicio = Zonas.zona1;
+            }
+            case "1"->{
+                this.zInicio = Zonas.zona1;
+            }
+            case "zona2"->{
+                this.zInicio = Zonas.zona2;
+            }
+            case "2"->{
+                this.zInicio = Zonas.zona2;
+            }
+            case "zona3"->{
+                this.zInicio = Zonas.zona3;
+            }
+            case "3"->{
+                this.zInicio = Zonas.zona3;
+            }
+            case "zona4"->{
+                this.zInicio = Zonas.zona4;
+            }
+            case "4"->{
+                this.zInicio = Zonas.zona4;
+            }
+            case "zona5"->{
+                this.zInicio = Zonas.zona5;
+            }
+            case "5"->{
+                this.zInicio = Zonas.zona5;
+            }
+        }
+        switch(zF){
+            case "zona1"->{
+                this.zFinal = Zonas.zona1;
+            }
+            case "1"->{
+                this.zFinal = Zonas.zona1;
+            }
+            case "zona2"->{
+                this.zFinal = Zonas.zona2;
+            }
+            case "2"->{
+                this.zFinal = Zonas.zona2;
+            }
+            case "zona3"->{
+                this.zFinal = Zonas.zona3;
+            }
+            case "3"->{
+                this.zFinal = Zonas.zona3;
+            }
+            case "zona4"->{
+                this.zFinal = Zonas.zona4;
+            }
+            case "4"->{
+                this.zFinal = Zonas.zona4;
+            }
+            case "zona5"->{
+                this.zFinal = Zonas.zona5;
+            }
+            case "5"->{
+                this.zFinal = Zonas.zona5;
+            }
+        }
         this.apodo_taxista = aTaxista;
         this.matTaxi = mTaxi;
     }

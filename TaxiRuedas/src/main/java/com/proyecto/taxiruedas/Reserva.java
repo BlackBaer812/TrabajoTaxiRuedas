@@ -233,7 +233,7 @@ public class Reserva implements Serializable{
 
     @Override
     public String toString() {
-        return "Apodo usuario: " + this.apU + "\t|Fecha de reserva: " + this.h.toString() + "\t|Tipo de taxi: " + this.tTaxi.toString();
+        return "ID: " + this.id + "\t|Apodo usuario: " + this.apU + "\t|Fecha de reserva: " + this.h.toString() + "\t|Tipo de taxi: " + this.tTaxi.toString();
     }
     
     

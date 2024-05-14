@@ -182,8 +182,8 @@ public class TaxiRuedas {
             System.out.println("1. Menu taxi");
             System.out.println("2. Lista de reservas");
             System.out.println("3. Aceptar reserva.");
-            System.out.println("4. Finalizar viaje.");
-            System.out.println("5. Historial de viajes.");
+            System.out.println("4. Historial de viajes.");
+            System.out.println("5. Finalizar viaje.");
             System.out.println("6. Lista de comentarios.");
             System.out.println("7. Cerrar Sesion");
             System.out.print("Introduce una opción: ");
@@ -207,11 +207,16 @@ public class TaxiRuedas {
                     String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
                     aceptReserva(conexion,u1,mat,idR);
                 }
-                case 4 ->{//Finalizar viaje aceptado
-                    
+                case 4 ->{//Lista de viajes
+                    List <Viaje> lViajes = listaViajesNoFinT(conexion,u1);
+                    for(Viaje viaj:lViajes){
+                        System.out.println(viaj);
+                    }
                 }
-                case 5 ->{//Lista de viajes
-                    
+                case 5 ->{//Finalizar viaje aceptado
+                    System.out.println("¿Qué viaje desea marcar como finalizado?");
+                    int vF = new Scanner(System.in).useLocale(Locale.US).nextInt();
+                    finViaje(conexion,u1,vF);
                 }
                 case 6 ->{//Lista de comentarios
                     
@@ -370,7 +375,19 @@ public class TaxiRuedas {
      * @param idReserva id de la reserva
      */
     public static void aceptReserva(Connection conexion, Taxista u1, String mat, int idReserva){
-        String sql = "CALL aceptar_reserva (" + u1.getApodo() + "," + mat + ","+ idReserva +")";
+        String sql = "CALL aceptar_reserva (?,?,?)";
+        try{
+            PreparedStatement pstmt = conexion.prepareCall(sql);
+            
+            pstmt = conexion.prepareStatement(sql);
+            pstmt.setString(1, u1.getApodo());
+            pstmt.setString(2,mat);
+            pstmt.setInt(3, idReserva);
+            
+            pstmt.executeQuery();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -443,6 +460,91 @@ public class TaxiRuedas {
             System.out.println("e.getMessage()");
         }
         return sal;
+    }
+    
+    /**
+     * Función para recuperar la lista de viajes
+     * @param conexion conexion a la BBDD
+     * @param u1 Taxista que consulta la lista
+     * @return Lista de los Viajes no finalizados
+     */
+    public static List<Viaje> listaViajesNoFinT(Connection conexion,Taxista u1){
+        List<Viaje> sal = new ArrayList<>();
+        String sql = String.format("SELECT * FROM viaje WHERE finalizado = 0 and apodo_taxista = ?");
+
+        try{
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            
+            pstmt.setString(1, u1.getApodo());
+            
+            ResultSet res = pstmt.executeQuery();
+            while(res.next()){
+                int id = res.getInt("ID");
+                String aUsu = res.getString("apodo_usu");
+                DateTimeFormatter us = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate fecha = LocalDate.parse(res.getString("fecha"),us);
+                String zI = res.getString("ZonaInicio");
+                String zF = res.getString("ZonaFinal");
+                String aTaxista = res.getString("apodo_taxista");
+                String mTaxi = res.getString("mat_taxi");
+                Viaje e = new Viaje (id,aUsu,fecha,zI,zF,aTaxista,mTaxi);
+                sal.add(e);
+            }
+        }catch(SQLException e){
+            System.out.println("e.getMessage()");
+        }
+        
+        return sal;
+    }
+    
+    /**
+     * 
+     * @param conexion conexion a la BBDD
+     * @param u1 Taxista que consulta la lista
+     * @return 
+     */
+    public static List<Viaje> listaViajesComentT(Connection conexion,Taxista u1){
+        List<Viaje> sal = new ArrayList<>();
+        String sql = String.format("SELECT * FROM viaje WHERE finalizado = 0 and apodo_taxista = ?");
+
+        try{
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            
+            pstmt.setString(1, u1.getApodo());
+            
+            ResultSet res = pstmt.executeQuery();
+            while(res.next()){
+                int id = res.getInt("ID");
+                String aUsu = res.getString("apodo_usu");
+                DateTimeFormatter us = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate fecha = LocalDate.parse(res.getString("fecha"),us);
+                String zI = res.getString("ZonaInicio");
+                String zF = res.getString("ZonaFinal");
+                String aTaxista = res.getString("apodo_taxista");
+                String mTaxi = res.getString("mat_taxi");
+                Viaje e = new Viaje (id,aUsu,fecha,zI,zF,aTaxista,mTaxi);
+                sal.add(e);
+            }
+        }catch(SQLException e){
+            System.out.println("e.getMessage()");
+        }
+        
+        return sal;
+    }
+    
+    public static void finViaje(Connection conexion, Taxista u1, int idV){
+        String sql=String.format("UPDATE viaje SET finalizado='1' WHERE apodo_taxista = ? and ID = ?");
+        try{
+            PreparedStatement pstmt = conexion.prepareCall(sql);
+            
+            pstmt = conexion.prepareStatement(sql);
+            pstmt.setString(1, u1.getApodo());
+            pstmt.setInt(2, idV);
+            
+            pstmt.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
     }
     
     /**
@@ -799,8 +901,6 @@ public class TaxiRuedas {
     public static Connection conectarBD(){
         
         
-        
-        Connection conexion = null;
         
         try{
             //cargar el controlador de jdbc
