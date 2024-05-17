@@ -137,35 +137,39 @@ public class TaxiRuedas {
         int op;
         do{
             System.out.println("Menu Usuario");
-            System.out.println("1. Realizar reserva.");
-            System.out.println("2. Taxistas disponibles.");
-            System.out.println("3. Historial de viajes.");
-            System.out.println("4. Realizar comentarios.");
-            System.out.println("5. Cerrar Sesion");
+            System.out.println("1. Cambiar de zona.");
+            System.out.println("2. Realizar reserva.");
+            System.out.println("3. Taxistas disponibles.");
+            System.out.println("4. Historial de viajes.");
+            System.out.println("5. Realizar comentarios.");
+            System.out.println("6. Cerrar Sesion");
             System.out.print("Introduce una opción: ");
             op = new Scanner(System.in).useLocale(Locale.US).nextInt();
             switch(op){
-                case 1 ->{//realizar reserva
+                case 1->{//cambia de zona
+                    cambioZona(conexion, u1);
+                }
+                case 2 ->{//realizar reserva
                     crearReserva(conexion,u1);
                 }
-                case 2 ->{//Listado de taxistas
+                case 3 ->{//Listado de taxistas
                     List<Taxista> lTaxista = listaTaxistas(conexion);
                     Arrays.deepToString(lTaxista.toArray());
                 }
-                case 3 ->{//Historial de viajes (no reservas)
+                case 4 ->{//Historial de viajes (no reservas)
                     
                 }
-                case 4 ->{//Realizar comentarios
+                case 5 ->{//Realizar comentarios
                     
                 }
-                case 5 ->{//Cerrar sesion
+                case 6 ->{//Cerrar sesion
                     System.out.println("Saliendo de la sesión.");
                 }
                 default->{
                     System.out.println("Opcion no aceptada");
                 }
             }
-        }while(op != 5);
+        }while(op != 6);
     }
     
     /**
@@ -179,49 +183,55 @@ public class TaxiRuedas {
         
         do{
             System.out.println("Menu Usuario");
-            System.out.println("1. Menu taxi");
-            System.out.println("2. Lista de reservas");
-            System.out.println("3. Aceptar reserva.");
-            System.out.println("4. Historial de viajes.");
-            System.out.println("5. Finalizar viaje.");
-            System.out.println("6. Lista de comentarios.");
-            System.out.println("7. Cerrar Sesion");
+            System.out.println("1. Cambiar de zona.");
+            System.out.println("2. Menu taxi.");
+            System.out.println("3. Lista de reservas.");
+            System.out.println("4. Aceptar reserva.");
+            System.out.println("5. Historial de viajes.");
+            System.out.println("6. Finalizar viaje.");
+            System.out.println("7. Lista de comentarios.");
+            System.out.println("8. Cerrar Sesion.");
             System.out.print("Introduce una opción: ");
             op = new Scanner(System.in).useLocale(Locale.US).nextInt();
             switch(op){
-                case 1 ->{ //menu taxi
+                case 1 ->{//cambiar de zona
+                    cambioZona(conexion, u1);
+                }
+                case 2 ->{ //menu taxi
                     System.out.println("Acceciendo a menu taxi.");
                     menuTaxi(conexion,u1);
                 }
                 
-                case 2 ->{//Lista de reservas
+                case 3 ->{//Lista de reservas
                     List <Reserva> lResev = listaReservas(conexion,"reserva");
                     for(Reserva reserv:lResev){
                         System.out.println(reserv);
                     }
                 }
-                case 3 ->{//Aceptar viaje
+                case 4 ->{//Aceptar viaje
                     System.out.println("¿Qué viaje quiere aceptar? (ID del viaje)");
                     int idR = new Scanner(System.in).useLocale(Locale.US).nextInt();
                     System.out.println("¿Qué vehiculo va a usar (Matrícula)?");
                     String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
                     aceptReserva(conexion,u1,mat,idR);
+                    noDisponible(conexion,u1.getApodo());
                 }
-                case 4 ->{//Lista de viajes
+                case 5 ->{//Lista de viajes
                     List <Viaje> lViajes = listaViajesNoFinT(conexion,u1);
                     for(Viaje viaj:lViajes){
                         System.out.println(viaj);
                     }
                 }
-                case 5 ->{//Finalizar viaje aceptado
+                case 6 ->{//Finalizar viaje aceptado
                     System.out.println("¿Qué viaje desea marcar como finalizado?");
                     int vF = new Scanner(System.in).useLocale(Locale.US).nextInt();
                     finViaje(conexion,u1,vF);
+                    disponible(conexion,u1.getApodo());
                 }
-                case 6 ->{//Lista de comentarios
+                case 7 ->{//Lista de comentarios
                     
                 }
-                case 7 ->{//Cerrar sesion
+                case 8 ->{//Cerrar sesion
                     System.out.println("Saliendo de la sesión.");
                     noDisponible(conexion,apo);
                     cerrarConexion(conexion);
@@ -230,7 +240,7 @@ public class TaxiRuedas {
                     System.out.println("Opcion no aceptada");
                 }
             }
-        }while(op != 7);
+        }while(op != 8);
     }
     
     /**
@@ -319,10 +329,11 @@ public class TaxiRuedas {
      */
     public static Usuario selectUsu(Connection conexion, String usu){
         Usuario e = null;
-        String sql = String.format("SELECT * FROM usuario WHERE apodo = \"%s\"",usu);
+        String sql = String.format("SELECT * FROM usuario WHERE apodo = ?");
         
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
+            pstmt.setString(1, usu);
             ResultSet res = pstmt.executeQuery();
                 if(res.next()){
                     String apo = res.getString("apodo");
@@ -345,7 +356,7 @@ public class TaxiRuedas {
      */
     public static Taxista selectTaxista(Connection conexion, String usu){
         Taxista e = null;
-        String sql = String.format("SELECT * FROM taxista WHERE apodo = \"%s\"",usu);
+        String sql = String.format("SELECT * FROM taxista WHERE apodo = ?");
         /*
         //Esta forma es para hacerlo como nos lo pide otro
         String tabla = "EMPLEADOS";
@@ -353,6 +364,7 @@ public class TaxiRuedas {
         */
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
+            pstmt.setString(1, usu);
             ResultSet res = pstmt.executeQuery();
                 if(res.next()){
                     String apo = res.getString("apodo");
@@ -377,9 +389,7 @@ public class TaxiRuedas {
     public static void aceptReserva(Connection conexion, Taxista u1, String mat, int idReserva){
         String sql = "CALL aceptar_reserva (?,?,?)";
         try{
-            PreparedStatement pstmt = conexion.prepareCall(sql);
-            
-            pstmt = conexion.prepareStatement(sql);
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
             pstmt.setString(1, u1.getApodo());
             pstmt.setString(2,mat);
             pstmt.setInt(3, idReserva);
@@ -399,9 +409,8 @@ public class TaxiRuedas {
        
         String sql=String.format("UPDATE taxista SET disponible='1' WHERE apodo = ?");
         try{
-            PreparedStatement pstmt = conexion.prepareCall(sql);
             
-            pstmt = conexion.prepareStatement(sql);
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
             pstmt.setString(1, apo);
             
             pstmt.executeUpdate();
@@ -418,9 +427,7 @@ public class TaxiRuedas {
     public static void noDisponible(Connection conexion, String apo){
         String sql=String.format("UPDATE taxista SET disponible='0' WHERE apodo = ?");
         try{
-            PreparedStatement pstmt = conexion.prepareCall(sql);
-            
-            pstmt = conexion.prepareStatement(sql);
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
             pstmt.setString(1, apo);
             
             pstmt.executeUpdate();
@@ -535,9 +542,7 @@ public class TaxiRuedas {
     public static void finViaje(Connection conexion, Taxista u1, int idV){
         String sql=String.format("UPDATE viaje SET finalizado='1' WHERE apodo_taxista = ? and ID = ?");
         try{
-            PreparedStatement pstmt = conexion.prepareCall(sql);
-            
-            pstmt = conexion.prepareStatement(sql);
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
             pstmt.setString(1, u1.getApodo());
             pstmt.setInt(2, idV);
             
@@ -632,9 +637,7 @@ public class TaxiRuedas {
         String sql=String.format("INSERT INTO taxi(matricula, tipo,apodotaxi) "
                 + "VALUES (?,?,?)");
         try{
-            PreparedStatement pstmt = conex.prepareCall(sql);
-            
-            pstmt = conex.prepareStatement(sql);
+            PreparedStatement pstmt = conex.prepareStatement(sql);
             pstmt.setString(1, mat);
             pstmt.setObject(2, tipo);
             pstmt.setString(3, u1.getApodo());
@@ -676,12 +679,10 @@ public class TaxiRuedas {
                 }
             }
             
-            if(tipo!= ""){
+            if(!"".equals(tipo)){
                 String sql=String.format("UPDATE taxi SET tipo=? WHERE matricula=?");
                 try{
-                    PreparedStatement pstmt = conexion.prepareCall(sql);
-
-                    pstmt = conexion.prepareStatement(sql);
+                    PreparedStatement pstmt = conexion.prepareStatement(sql);
                     pstmt.setString(1, tipo);
                     pstmt.setString(2, mat);
 
@@ -710,10 +711,11 @@ public class TaxiRuedas {
         System.out.println("¿Que registro quiere eleminar?");
         String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
         if(existeReg(conexion,mat,"taxi","matricula")){
-            String sql=String.format("DELETE FROM %s WHERE %s = \'%s\'",tabla, columna, mat);
+            String sql=String.format("DELETE FROM %s WHERE %s = ?",tabla,columna);
             
             try{
                 PreparedStatement pstmt = conexion.prepareCall(sql);
+                pstmt.setString(1, mat);
                 System.out.println(pstmt);
                 pstmt.executeUpdate();
                 System.out.println("Registro borrado correctamente de " + tabla);
@@ -727,16 +729,17 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conex
-     * @param u1
-     * @return 
+     * Función para crear una reserva en la BBDD
+     * @param conex conexión a la BBDD
+     * @param u1 usuario que crea la reserva siendo este objeto de tipo Usuario
+     * @return true si lo crea, false si no
      */
     public static boolean crearReserva(Connection conex, Usuario u1){
         boolean sal = false;
         
-        System.out.print("¿Adonde que zona quiere ir?");
+        System.out.print("¿A que zona quiere ir?");
         String zFinal = new Scanner(System.in).useLocale(Locale.US).nextLine();
+        String zF = compruebaZona(zFinal);
         
         System.out.print("¿Que tipo de taxi quiere?");
         System.out.println("1. Estandar");
@@ -762,20 +765,19 @@ public class TaxiRuedas {
         
         LocalDate ahora = LocalDate.now();
         
-        String sql=String.format("INSERT INTO reserva(apodo, fecha, ZonaInicio, ZonaFinal, aceptado,tipotaxi) "
-                + "VALUES (?,?,?,?,?,?)");
+        String sql="INSERT INTO reserva(apodo, fecha, ZonaInicio, ZonaFinal, aceptado,tipotaxi) "
+                + "VALUES (?,?,?,?,?,?)";
         try{
-            PreparedStatement pstmt = conex.prepareCall(sql);
-            
-            pstmt = conex.prepareStatement(sql);
+            PreparedStatement pstmt = conex.prepareStatement(sql);
             pstmt.setString(1, u1.getApodo());
             pstmt.setObject(2, ahora);
             pstmt.setString(3, u1.getLugarS());
-            pstmt.setString(4, zFinal);
+            pstmt.setString(4, zF);
             pstmt.setInt(5, 0);
             pstmt.setString(6, tipo);
             
             pstmt.executeUpdate();
+            sal = true;
         }catch(SQLException e){
             e.printStackTrace();
         }
@@ -784,12 +786,13 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conex
-     * @param apo
-     * @return 
+     * Función para crear un usuario en la base de datos
+     * @param conex conexión a la base de datos
+     * @param apo apodo que va a usar el usuario
+     * @return true
      */
     public static boolean crearUsu(Connection conex, String apo){
+        boolean sal = false;
         System.out.print("Clave: ");
         String cla = new Scanner(System.in).useLocale(Locale.US).nextLine();
         System.out.print("Nombre: ");
@@ -800,36 +803,39 @@ public class TaxiRuedas {
         String email = new Scanner(System.in).useLocale(Locale.US).nextLine();
         System.out.print("zona: ");
         String z = new Scanner(System.in).useLocale(Locale.US).nextLine();
-        //controlar que la zona existe
+        String zona = compruebaZona(z);
         apo = apo.toLowerCase();
-        String sql=String.format("INSERT INTO usuario(apodo, clave, nombre, apellidos, email, zona) "
-                + "VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\')",apo, cla, nom, ape, email,z);
+        String sql="INSERT INTO usuario(apodo, clave, nombre, apellidos, email, zona) "
+                + "VALUES (?,?,?,?,?,?)";
         
         //Esta opción es otra para hacer la consulta de insert en prueba
         //String sql = "INSERT INTO Prueba (id,nombre,direccion,fecha) VALUES(?,?,?,?)";
         try{
             PreparedStatement pstmt = conex.prepareCall(sql);
-            /*
-            pstmt = conex.preparedStatement
-            pstmt.setString(1, Code);
-            pstmt.setString(2, nombre);
-            pstmt.setString(3, direccion);
-            pstmt.setString(4, aux);
-            */
+            
+            pstmt.setString(1, apo);
+            pstmt.setString(2, cla);
+            pstmt.setString(3, nom);
+            pstmt.setString(4, ape);
+            pstmt.setString(5, email);
+            pstmt.setString(6, zona);
+            
             pstmt.executeUpdate();
+            sal = true;
         }catch(SQLException e){
             e.printStackTrace();
         }
-        return true;
+        return sal;
     }
     
     /**
-     * 
-     * @param conex
-     * @param apo
-     * @return 
+     * Función para crear taxista en la base de datos
+     * @param conex conexión a la base de datos
+     * @param apo el apodo que va usar
+     * @return Al crearse devuelve true
      */
     public static boolean crearTaxista(Connection conex, String apo){
+        boolean sal = false;
         System.out.print("Clave: ");
         String cla = new Scanner(System.in).useLocale(Locale.US).nextLine();
         System.out.print("Nombre: ");
@@ -840,27 +846,31 @@ public class TaxiRuedas {
         String email = new Scanner(System.in).useLocale(Locale.US).nextLine();
         System.out.print("zona: ");
         String z = new Scanner(System.in).useLocale(Locale.US).nextLine();
-        //Controlar que la zona existe
-        int disp = 0;
+        String zona = compruebaZona(z);
+        
         apo = apo.toLowerCase();
-        String sql=String.format("INSERT INTO taxista(apodo, clave, nombre, apellidos, email, disponible, zona) "
-                + "VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',%d,\'%s\')",apo, cla, nom, ape, email,disp,z);
+        String sql="INSERT INTO taxista(apodo, clave, nombre, apellidos, email, disponible, zona) "
+                + "VALUES (?,?,?,?,?,?,?)";
         
         //Esta opción es otra para hacer la consulta de insert en prueba
         //String sql = "INSERT INTO Prueba (id,nombre,direccion,fecha) VALUES(?,?,?,?)";
         try{
             PreparedStatement pstmt = conex.prepareCall(sql);
-            /*
-            pstmt.setString(1, Code);
-            pstmt.setString(2, nombre);
-            pstmt.setString(3, direccion);
-            pstmt.setString(4, aux);
-            */
+            
+            pstmt.setString(1, apo);
+            pstmt.setString(2, cla);
+            pstmt.setString(3, nom);
+            pstmt.setString(4, ape);
+            pstmt.setString(5, email);
+            pstmt.setInt(6, 0);
+            pstmt.setString(7, zona);
+            
             pstmt.executeUpdate();
+            sal = true;
         }catch(SQLException e){
             e.printStackTrace();
         }
-        return true;
+        return sal;
     }
     
     /**
@@ -872,9 +882,10 @@ public class TaxiRuedas {
      * @return true si esta, false si no esta
      */
     public static boolean existeReg(Connection conex, String apo, String tabla, String nomCol){
-        String sql=String.format("SELECT COUNT(*) FROM %s WHERE %s = \'%s\'",tabla, nomCol, apo);
+        String sql=String.format("SELECT COUNT(*) FROM %s WHERE %s = ?",tabla,nomCol);
         try{
             PreparedStatement pstmt = conex.prepareStatement(sql);
+            pstmt.setString(1, apo);
             ResultSet res = pstmt.executeQuery();
             while(res.next()){
                 int contado = res.getInt(1); //Coge la primera columna
@@ -887,6 +898,47 @@ public class TaxiRuedas {
     }
     
     
+    /**
+     * Función para cambiar la zona en la que se encuentra actualmente
+     * @param conexion Conexión a la BBDD
+     * @param u1 Usuario que esta realizando la acción
+     * @return false si no se realiza el update, true si se realiza correctamente
+     */
+    public static boolean cambioZona(Connection conexion, UserTaxi u1){
+        boolean hecho = false;
+        
+        String tabla = "";
+        
+        switch(u1.tipo()){
+            case "usario"->{
+                u1 = (Usuario) u1;
+                tabla = "usuario";
+            }
+            case "taxista"->{
+                u1 = (Taxista) u1;
+                tabla = "taxista";
+            }
+        }
+        
+        System.out.println("¿En que zona se encuentra ahora?");
+        String zona = compruebaZona(new Scanner(System.in).useLocale(Locale.US).nextLine());
+        
+        String sql=String.format("UPDATE %s SET zona = ? WHERE apodo = ?",tabla);
+        try{
+            
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+
+            pstmt.setString(1, zona);
+            pstmt.setString(2, u1.getNombre());
+            
+            pstmt.executeUpdate();
+            hecho = true;
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        
+        return hecho;
+    }
     
     /*************************************************/
     /*************************************************/
@@ -895,12 +947,65 @@ public class TaxiRuedas {
     /*************************************************/
     
     /**
-     * Conecta a una base de datos que le indiques
+     * Comprueba si la zona introducida es una zona aceptada
+     * @param entrada 
      * @return 
+     */
+    public static String compruebaZona(String entrada){
+        String zona="";
+        
+        switch(entrada){
+            case "zona1"->{
+                zona = Zonas.zona1.toString();
+            }
+            case "1"->{
+                zona = Zonas.zona1.toString();
+            }
+            case "zona2"->{
+                zona = Zonas.zona2.toString();
+            }
+            case "2"->{
+                zona = Zonas.zona2.toString();
+            }
+            case "zona3"->{
+                zona = Zonas.zona3.toString();
+            }
+            case "3"->{
+                zona = Zonas.zona3.toString();
+            }
+            case "zona4"->{
+                zona = Zonas.zona4.toString();
+            }
+            case "4"->{
+                zona = Zonas.zona4.toString();
+            }
+            case "zona5"->{
+                zona = Zonas.zona5.toString();
+            }
+            case "5"->{
+                zona = Zonas.zona5.toString();
+            }
+            default ->{
+                System.out.println("Zona no aceptada. '\r'Se pone zona 1 por defecto.");
+                zona = Zonas.zona1.toString();
+            }
+        }
+        
+        return zona;
+    }
+    
+    /**
+     * Conecta a una base de datos que le indiques
+     * @return Devuelve la conexión que usaremos con la base de datos
      */
     public static Connection conectarBD(){
         
-        
+        //jddc:mysql es el driver usado
+        //localhost:3306/p1 es donde esta la base de datos
+        String url = "jdbc:mysql://iasanz.synology.me:3306/mruizc96_pf";
+        String usuario = "alumno";
+        String password = "Amparosanz1_";
+        Connection conexion = null;
         
         try{
             //cargar el controlador de jdbc
@@ -920,8 +1025,8 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
-     * @param conexion 
+     * Cierra la conexión con la base de datos
+     * @param conexion Como parametro de entrada se le da la conexión que estamos utilizando
      */
     public static void cerrarConexion(Connection conexion){
         if(conexion != null){
