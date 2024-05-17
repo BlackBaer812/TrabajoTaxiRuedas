@@ -1000,12 +1000,7 @@ public class TaxiRuedas {
      */
     public static Connection conectarBD(){
         
-        //jddc:mysql es el driver usado
-        //localhost:3306/p1 es donde esta la base de datos
-        String url = "jdbc:mysql://iasanz.synology.me:3306/mruizc96_pf";
-        String usuario = "alumno";
-        String password = "Amparosanz1_";
-        Connection conexion = null;
+        
         
         try{
             //cargar el controlador de jdbc
