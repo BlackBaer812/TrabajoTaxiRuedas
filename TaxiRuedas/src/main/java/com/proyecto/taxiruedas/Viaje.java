@@ -126,6 +126,11 @@ public class Viaje {
         this.matTaxi = mTaxi;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    
     
     @Override
     public String toString() {

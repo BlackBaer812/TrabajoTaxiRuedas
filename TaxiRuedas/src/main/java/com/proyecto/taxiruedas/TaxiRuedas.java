@@ -181,6 +181,8 @@ public class TaxiRuedas {
         Taxista u1 = selectTaxista(conexion, apo);
         int op;
         
+        Viaje v1 = null;
+        
         do{
             System.out.println("Menu Usuario");
             System.out.println("1. Cambiar de zona.");
@@ -203,18 +205,38 @@ public class TaxiRuedas {
                 }
                 
                 case 3 ->{//Lista de reservas
-                    List <Reserva> lResev = listaReservas(conexion,"reserva");
-                    for(Reserva reserv:lResev){
-                        System.out.println(reserv);
+                    if(compruebaReservas(conexion)>0){
+                        List <Reserva> lResev = listaReservas(conexion,"reserva");
+                        for(Reserva reserv:lResev){
+                            System.out.println(reserv);
+                        }
+                    }
+                    else{
+                        System.out.println("No hay ninguna reserva a la espera de ser aceptada");
                     }
                 }
                 case 4 ->{//Aceptar viaje
-                    System.out.println("¿Qué viaje quiere aceptar? (ID del viaje)");
-                    int idR = new Scanner(System.in).useLocale(Locale.US).nextInt();
-                    System.out.println("¿Qué vehiculo va a usar (Matrícula)?");
-                    String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
-                    aceptReserva(conexion,u1,mat,idR);
-                    noDisponible(conexion,u1.getApodo());
+                    if(compruebaReservas(conexion)>0){
+                        if(viajesActivos(conexion,u1)>0){
+                            System.out.println("Antes de poder aceptar otro viaje debe de completar los anteriores");
+                        }
+                        else{
+                            List <Reserva> lResev = listaReservas(conexion,"reserva");
+                            for(Reserva reserv:lResev){
+                                System.out.println(reserv);
+                            }
+                            System.out.print("¿Qué viaje quiere aceptar? (ID del viaje)");
+                            int idR = new Scanner(System.in).useLocale(Locale.US).nextInt();
+                            System.out.print("¿Qué vehiculo va a usar (Matrícula)?");
+                            String mat = new Scanner(System.in).useLocale(Locale.US).nextLine();
+                            aceptReserva(conexion,u1,mat,idR);
+                            noDisponible(conexion,u1.getApodo());
+                            v1 = viajeActivo(conexion,u1);
+                        }
+                    }
+                    else{
+                        System.out.println("No hay reserva que pueda ser aceptada.");
+                    }
                 }
                 case 5 ->{//Lista de viajes
                     List <Viaje> lViajes = listaViajesNoFinT(conexion,u1);
@@ -233,6 +255,12 @@ public class TaxiRuedas {
                 }
                 case 8 ->{//Cerrar sesion
                     System.out.println("Saliendo de la sesión.");
+                    if(viajesActivos(conexion,u1)>0){
+                        if(v1 == null){
+                            v1 = viajeActivo(conexion,u1);
+                        }
+                        finViaje(conexion,u1,v1.getId());
+                    }
                     noDisponible(conexion,apo);
                     cerrarConexion(conexion);
                 }
@@ -399,6 +427,59 @@ public class TaxiRuedas {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * función para recuperar que viaje tiene activo en este momento
+     * @param conexion conexión a la base de datos
+     * @param u1 taxista que esta conectado ahora mismo
+     * @return objeto de la clase Viaje
+     */
+    public static Viaje viajeActivo(Connection conexion, Taxista u1){
+        Viaje e = null;
+        String sql = String.format("SELECT * FROM viaje WHERE apodo_taxista = ? and finalizado = 0");
+        /*
+        //Esta forma es para hacerlo como nos lo pide otro
+        String tabla = "EMPLEADOS";
+        String sql2 = String.format("SELECT * FROM %S", tabla);
+        */
+        try{
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            pstmt.setString(1, u1.getApodo());
+            ResultSet res = pstmt.executeQuery();
+                if(res.next()){
+                    int id = res.getInt("ID");
+                    String fecha = res.getString("fecha");
+                    DateTimeFormatter us = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate f = LocalDate.parse(fecha, us);
+                    String aUsu = res.getString("apodo_usu");
+                    String zI = res.getString("ZonaInicio");
+                    String zF = res.getString("ZonaFinal");
+                    String aTaxi = res.getString("apodo_taxista");
+                    String mTaxi = res.getString("mat_taxi");
+                    e = new Viaje (id,aUsu,f,zI,zF,aTaxi,mTaxi);
+                }
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
+        return e;
+    }
+    
+    public static int viajesActivos(Connection conexion, Taxista u1){
+        int sal = 0;
+        String sql = String.format("SELECT count(*) FROM viaje WHERE apodo_taxista = ? and finalizado = 0");
+        try{
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            pstmt.setString(1, u1.getApodo());
+            ResultSet res = pstmt.executeQuery();
+                if(res.next()){
+                    sal = res.getInt(1);
+                }
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
+        return sal;
+        
+    } 
     
     /**
      * Pone disponible al taxista
@@ -782,6 +863,26 @@ public class TaxiRuedas {
             e.printStackTrace();
         }
         
+        return sal;
+    }
+    
+    /**
+     * Función para saber si hay reservas en el sistema
+     * @param conexion conexion a la base de datos
+     * @return cantidad de reservas sin aceptar en el sistema
+     */
+    public static int compruebaReservas(Connection conexion){
+        int sal = 0;
+        String sql = String.format("SELECT count(*) FROM reservas WHERE aceptado = 0");
+        try{
+            PreparedStatement pstmt = conexion.prepareStatement(sql);
+            ResultSet res = pstmt.executeQuery();
+                if(res.next()){
+                    sal = res.getInt(1);
+                }
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
         return sal;
     }
     
