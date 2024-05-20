@@ -46,14 +46,14 @@ public abstract class UserTaxi implements Serializable, Comparable{
      */
     @Override
     public boolean equals(Object o){
-        return this.apodo.equals(((UserTaxi) o).getNombre()) && this.key.equals(((UserTaxi) o).getKey());
+        return this.apodo.equals(((UserTaxi) o).getApodo()) && this.key.equals(((UserTaxi) o).getKey());
     }
 
     /**
      * Nos devuelve el apodo del usuario
      * @return String apodo de usuario
      */
-    public String getNombre() {
+    public String getApodo() {
         return apodo;
     }
 
@@ -88,7 +88,7 @@ public abstract class UserTaxi implements Serializable, Comparable{
      */
     @Override
     public int compareTo(Object o) {
-        return this.apodo.compareTo(((UserTaxi) o).getNombre());
+        return this.apodo.compareTo(((UserTaxi) o).getApodo());
     }
     
     public abstract String tipo();

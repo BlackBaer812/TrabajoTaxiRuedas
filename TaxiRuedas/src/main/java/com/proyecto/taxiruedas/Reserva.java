@@ -48,6 +48,11 @@ public class Reserva implements Serializable{
     private TipoTaxi tTaxi;
     
     /**
+     * Precio de la reserva realizada
+     */
+    private int precio;
+    
+    /**
      * Constructor para crear la lista de las reservas con las variables esenciales
      * @param id Clave primaria de la reserva
      * @param apU Apodo del usuario que ha creado esta reserva
@@ -55,74 +60,43 @@ public class Reserva implements Serializable{
      * @param zI Zona de inicio del trayecto
      * @param zF Zona de final de inicio
      * @param tTax Tipo de taxi
+     * @param p Precio de la reserva realizada
      */
-    public Reserva(Integer id, String apU, LocalDate fecha,String zI, String zF, String tTax){
+    public Reserva(Integer id, String apU, LocalDate fecha,String zI, String zF, String tTax, int p){
         this.id = id;
         this.apU = apU;
         this.h = fecha;
         switch(zI){
-            case "zona1"->{
+            case "zona1","1"->{
                 this.zonaIni = Zonas.zona1;
             }
-            case "1"->{
-                this.zonaIni = Zonas.zona1;
-            }
-            case "zona2"->{
+            case "zona2","2"->{
                 this.zonaIni = Zonas.zona2;
             }
-            case "2"->{
-                this.zonaIni = Zonas.zona2;
-            }
-            case "zona3"->{
+            case "zona3","3"->{
                 this.zonaIni = Zonas.zona3;
             }
-            case "3"->{
-                this.zonaIni = Zonas.zona3;
-            }
-            case "zona4"->{
+            case "zona4","4"->{
                 this.zonaIni = Zonas.zona4;
             }
-            case "4"->{
-                this.zonaIni = Zonas.zona4;
-            }
-            case "zona5"->{
-                this.zonaIni = Zonas.zona5;
-            }
-            case "5"->{
+            case "zona5","5"->{
                 this.zonaIni = Zonas.zona5;
             }
         }
-        //esto hay que pasarlo a la parte de creación de reserva y cambiar 
-        //el parametro de creacion de reserva al tipo enumerado
         switch(zF){
-            case "zona1"->{
+            case "zona1","1"->{
                 this.zonaFin = Zonas.zona1;
             }
-            case "1"->{
-                this.zonaFin = Zonas.zona1;
-            }
-            case "zona2"->{
+            case "zona2","2"->{
                 this.zonaFin = Zonas.zona2;
             }
-            case "2"->{
-                this.zonaFin = Zonas.zona2;
-            }
-            case "zona3"->{
+            case "zona3","3"->{
                 this.zonaFin = Zonas.zona3;
             }
-            case "3"->{
-                this.zonaFin = Zonas.zona3;
-            }
-            case "zona4"->{
+            case "zona4","4"->{
                 this.zonaFin = Zonas.zona4;
             }
-            case "4"->{
-                this.zonaFin = Zonas.zona4;
-            }
-            case "zona5"->{
-                this.zonaFin = Zonas.zona5;
-            }
-            case "5"->{
+            case "zona5","5"->{
                 this.zonaFin = Zonas.zona5;
             }
         }
@@ -137,6 +111,7 @@ public class Reserva implements Serializable{
                 this.tTaxi = TipoTaxi.entrega;
             }
         }
+        this.precio=p;
     }
     
     /**
@@ -147,76 +122,45 @@ public class Reserva implements Serializable{
      * @param zF Zona donde terminara el viaje
      * @param acept Si la reserva ha sido aceptada o no
      * @param tTax Tipo de taxi pedido
+     * @param p Precio de la reserva realizada
      */
-    public Reserva(Integer id, String apU,String zI, String zF, int acept, TipoTaxi tTax){
+    public Reserva(Integer id, String apU,String zI, String zF, int acept, TipoTaxi tTax,int p){
         this.id=id;
         this.apU=apU;
         this.h = LocalDate.now();
         //esto hay que pasarlo a la parte de creación de reserva y cambiar 
         //el parametro de creacion de reserva al tipo enumerado
         switch(zI){
-            case "zona1"->{
+            case "zona1","1"->{
                 this.zonaIni = Zonas.zona1;
             }
-            case "1"->{
-                this.zonaIni = Zonas.zona1;
-            }
-            case "zona2"->{
+            case "zona2","2"->{
                 this.zonaIni = Zonas.zona2;
             }
-            case "2"->{
-                this.zonaIni = Zonas.zona2;
-            }
-            case "zona3"->{
+            case "zona3","3"->{
                 this.zonaIni = Zonas.zona3;
             }
-            case "3"->{
-                this.zonaIni = Zonas.zona3;
-            }
-            case "zona4"->{
+            case "zona4","4"->{
                 this.zonaIni = Zonas.zona4;
             }
-            case "4"->{
-                this.zonaIni = Zonas.zona4;
-            }
-            case "zona5"->{
-                this.zonaIni = Zonas.zona5;
-            }
-            case "5"->{
+            case "zona5","5"->{
                 this.zonaIni = Zonas.zona5;
             }
         }
-        //esto hay que pasarlo a la parte de creación de reserva y cambiar 
-        //el parametro de creacion de reserva al tipo enumerado
         switch(zF){
-            case "zona1"->{
+            case "zona1","1"->{
                 this.zonaFin = Zonas.zona1;
             }
-            case "1"->{
-                this.zonaFin = Zonas.zona1;
-            }
-            case "zona2"->{
+            case "zona2","2"->{
                 this.zonaFin = Zonas.zona2;
             }
-            case "2"->{
-                this.zonaFin = Zonas.zona2;
-            }
-            case "zona3"->{
+            case "zona3","3"->{
                 this.zonaFin = Zonas.zona3;
             }
-            case "3"->{
-                this.zonaFin = Zonas.zona3;
-            }
-            case "zona4"->{
+            case "zona4","4"->{
                 this.zonaFin = Zonas.zona4;
             }
-            case "4"->{
-                this.zonaFin = Zonas.zona4;
-            }
-            case "zona5"->{
-                this.zonaFin = Zonas.zona5;
-            }
-            case "5"->{
+            case "zona5","5"->{
                 this.zonaFin = Zonas.zona5;
             }
         }
@@ -229,11 +173,15 @@ public class Reserva implements Serializable{
             }
         }
         this.tTaxi = tTax;
+        this.precio=p;
     }
 
     @Override
     public String toString() {
-        return "ID: " + this.id + "\t|Apodo usuario: " + this.apU + "\t|Fecha de reserva: " + this.h.toString() + "\t|Tipo de taxi: " + this.tTaxi.toString();
+        return "ID: " + this.id + "\t|Apodo usuario: " + this.apU + "\t|Fecha de reserva: " + this.h.toString() 
+                + "\t|Tipo de taxi: " + this.tTaxi.toString() 
+                + "\t|Zona de inicio: " + this.zonaIni + "\t|Zona final: " + this.zonaFin
+                + "\t|Precio: " + this.precio;
     }
     
     

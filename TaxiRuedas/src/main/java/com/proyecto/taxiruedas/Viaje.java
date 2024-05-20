@@ -26,11 +26,11 @@ public class Viaje {
     /**
      * Zona de inicio del viaje
      */
-    private Zonas zInicio;
+    private Zonas zonaIni;
     /**
      * Zona final del viaje
      */
-    private Zonas zFinal;
+    private Zonas zonaFin;
     /**
      * Apodo del taxista que ha aceptado el viaje
      */
@@ -45,6 +45,11 @@ public class Viaje {
     private int fin;
     
     /**
+     * Precio del viaje
+     */
+    private int precio;
+    
+    /**
      * Constructor de taxi con la información para el usuario
      * @param ID Clave primaria del viaje
      * @param aUsu Apodo del usuario que realizo la reserva
@@ -53,77 +58,49 @@ public class Viaje {
      * @param zF zona final de viaje
      * @param aTaxista apodo del taxista
      * @param mTaxi matricula del taxi con el que se realizara el viaje
+     * @param precio Precio del viaje realizado
      */
-    public Viaje(int ID, String aUsu, LocalDate f, String zI, String zF, String aTaxista, String mTaxi){
+    public Viaje(int ID, String aUsu, LocalDate f, String zI, String zF, String aTaxista, String mTaxi, int precio){
         this.id = ID;
         this.apodo_usu =  aUsu;
         this.fecha = f;
         switch(zI){
-            case "zona1"->{
-                this.zInicio = Zonas.zona1;
+            case "zona1","1"->{
+                this.zonaIni = Zonas.zona1;
             }
-            case "1"->{
-                this.zInicio = Zonas.zona1;
+            case "zona2","2"->{
+                this.zonaIni = Zonas.zona2;
             }
-            case "zona2"->{
-                this.zInicio = Zonas.zona2;
+            case "zona3","3"->{
+                this.zonaIni = Zonas.zona3;
             }
-            case "2"->{
-                this.zInicio = Zonas.zona2;
+            case "zona4","4"->{
+                this.zonaIni = Zonas.zona4;
             }
-            case "zona3"->{
-                this.zInicio = Zonas.zona3;
-            }
-            case "3"->{
-                this.zInicio = Zonas.zona3;
-            }
-            case "zona4"->{
-                this.zInicio = Zonas.zona4;
-            }
-            case "4"->{
-                this.zInicio = Zonas.zona4;
-            }
-            case "zona5"->{
-                this.zInicio = Zonas.zona5;
-            }
-            case "5"->{
-                this.zInicio = Zonas.zona5;
+            case "zona5","5"->{
+                this.zonaIni = Zonas.zona5;
             }
         }
         switch(zF){
-            case "zona1"->{
-                this.zFinal = Zonas.zona1;
+            case "zona1","1"->{
+                this.zonaFin = Zonas.zona1;
             }
-            case "1"->{
-                this.zFinal = Zonas.zona1;
+            case "zona2","2"->{
+                this.zonaFin = Zonas.zona2;
             }
-            case "zona2"->{
-                this.zFinal = Zonas.zona2;
+            case "zona3","3"->{
+                this.zonaFin = Zonas.zona3;
             }
-            case "2"->{
-                this.zFinal = Zonas.zona2;
+            case "zona4","4"->{
+                this.zonaFin = Zonas.zona4;
             }
-            case "zona3"->{
-                this.zFinal = Zonas.zona3;
-            }
-            case "3"->{
-                this.zFinal = Zonas.zona3;
-            }
-            case "zona4"->{
-                this.zFinal = Zonas.zona4;
-            }
-            case "4"->{
-                this.zFinal = Zonas.zona4;
-            }
-            case "zona5"->{
-                this.zFinal = Zonas.zona5;
-            }
-            case "5"->{
-                this.zFinal = Zonas.zona5;
+            case "zona5","5"->{
+                this.zonaFin = Zonas.zona5;
             }
         }
         this.apodo_taxista = aTaxista;
         this.matTaxi = mTaxi;
+        this.precio = precio;
     }
 
     public int getId() {
@@ -135,8 +112,9 @@ public class Viaje {
     @Override
     public String toString() {
         return "ID: " + id + "\t|Usuario: " + apodo_usu + "\t|Fecha: " + fecha + 
-                "\t|Inicio: " + zInicio + "\t|Final: " + zFinal +
-                "\t|Taxista: " + apodo_taxista + "\t|Matrícula: " + matTaxi;
+                "\t|Inicio: " + zonaIni + "\t|Final: " + zonaFin +
+                "\t|Taxista: " + apodo_taxista + "\t|Matrícula: " + matTaxi
+                + "\t|Precio: " + this.precio;
     }
     
     

@@ -42,6 +42,18 @@ public class Comentario {
         this.comentario=coment;
         this.id_viaje=idV;
     }
+    
+    /**
+     * Constructor para solo 3 elementos para consultas que no requieran todos los campos de viaje
+     * @param idV ID del viaje comentado
+     * @param punt puntuación que tiene ese viaje
+     * @param coment Comentario del viaje
+     */
+    public Comentario(int idV, int punt, String coment){
+        this.id_viaje = idV;
+        this.puntuacion = punt;
+        this.comentario = coment;
+    }
 
     /**
      * Getter de la puntuación que tiene un comentario
