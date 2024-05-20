@@ -157,10 +157,13 @@ public class TaxiRuedas {
                     Arrays.deepToString(lTaxista.toArray());
                 }
                 case 4 ->{//Historial de viajes (no reservas)
-                    
+                    List<Viaje> lViajes= listaViajesComentU(conexion,u1);
+                    for(Viaje v:lViajes){
+                        System.out.println(v);
+                    }
                 }
                 case 5 ->{//Realizar comentarios
-                    
+                    crearComentario(conexion,u1);
                 }
                 case 6 ->{//Cerrar sesion
                     System.out.println("Saliendo de la sesión.");
@@ -586,14 +589,14 @@ public class TaxiRuedas {
     }
     
     /**
-     * 
+     * Lista de viajes que ha realizado un usuario
      * @param conexion conexion a la BBDD
      * @param u1 Taxista que consulta la lista
-     * @return 
+     * @return ArrayList de viajes con los datos solicitados
      */
-    public static List<Viaje> listaViajesComentT(Connection conexion,Taxista u1){
+    public static List<Viaje> listaViajesComentU(Connection conexion,Usuario u1){
         List<Viaje> sal = new ArrayList<>();
-        String sql = String.format("SELECT * FROM viaje WHERE finalizado = 0 and apodo_taxista = ?");
+        String sql = String.format("SELECT * FROM viaje WHERE finalizado = 1 and apodo_usu = ?");
 
         try{
             PreparedStatement pstmt = conexion.prepareStatement(sql);
@@ -620,6 +623,70 @@ public class TaxiRuedas {
         return sal;
     }
     
+    /**
+     * Función para crear comentarios en la base de datos
+     * @param conexion conexión a la BBDD
+     * @param u1 Usuario que crea el comentario
+     */
+    public static void crearComentario(Connection conexion, Usuario u1){
+        
+        /*
+        Viajes realizados y que puede comentar
+        */
+        List<Viaje> lViajes= listaViajesComentU(conexion,u1);
+        for(Viaje v:lViajes){
+            System.out.println(v);
+        }
+        
+        //Datos introducidos
+        System.out.print("Id del viaje que quiere comentar: ");
+        int idV = new Scanner(System.in).useLocale(Locale.US).nextInt();
+        
+        
+        System.out.print("Puntuación del 1 al 5 (en número): ");
+        int punt = new Scanner(System.in).useLocale(Locale.US).nextInt();
+        
+        if(punt < 1){
+            punt = 1;
+        }
+        
+        if(punt > 5){
+            punt = 5;
+        }
+        
+        System.out.println("Comentario(240 caracteres como maximo): ");
+        String coment = new Scanner(System.in).useLocale(Locale.US).nextLine();
+        if(coment.isEmpty()){
+            coment="No comment.";
+        }
+        if (coment.length()>240){
+            coment=cuentaLetras(coment);
+        }
+        
+        
+        //Query para la BBDD
+        String sql="INSERT INTO comentario(puntuacion, comentario, id_viaje) "
+                + "VALUES (?,?,?)";
+        
+        try{
+            PreparedStatement pstmt = conexion.prepareCall(sql);
+            
+            pstmt.setInt(1, punt);
+            pstmt.setString(2, coment);
+            pstmt.setInt(3, idV);
+            
+            pstmt.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Finaliza el viaje activo
+     * @param conexion conexión a la BBDD
+     * @param u1 taxista que ha iniciado la sesión
+     * @param idV Id del viaje
+     */
     public static void finViaje(Connection conexion, Taxista u1, int idV){
         String sql=String.format("UPDATE viaje SET finalizado='1' WHERE apodo_taxista = ? and ID = ?");
         try{
@@ -1046,6 +1113,32 @@ public class TaxiRuedas {
     /************* Funciones basicas *****************/
     /*************************************************/
     /*************************************************/
+    
+    /**
+     * Función para limitar la cantidad de letras
+     * @param lCar
+     * @return 
+     */
+    public static String cuentaLetras(String lCar){
+        String sal = "";
+        
+        List <Character> lC =new ArrayList<>();
+        
+        int letras=0;
+        
+        for(int i = 0; i<lCar.length() ; i++){
+            lC.add(lCar.charAt(i));
+        }
+        
+        char c = ' ';
+        for(int j = 0; j < 240; j++){
+            c = lC.get(j);
+            sal += c;
+            letras++;
+        }
+        
+        return sal;
+    }
     
     /**
      * Comprueba si la zona introducida es una zona aceptada
