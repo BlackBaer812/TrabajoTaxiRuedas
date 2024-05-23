@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -48,10 +49,14 @@ public class TaxiRuedas {
             System.out.println("Menu de selección:");
             System.out.println("1. Iniciar sesion");
             System.out.println("2. Registarse");
-            System.out.println("3. Recuperar contraseña");
-            System.out.println("4. Salir");
+            System.out.println("3. Salir");
             System.out.print("Introduce una opción: ");
-            op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            try{
+                op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            }
+            catch(InputMismatchException e){
+                op = 0;
+            }
             switch(op){
                 case 1->{//Iniciar sesion
                     Connection conexion = conectarBD();
@@ -110,14 +115,11 @@ public class TaxiRuedas {
                     }
                     cerrarConexion(conexion);
                 }
-                case 3 ->{ //recuperar cuenta
-                    
-                }
-                case 4 ->{ //Salir del programa
+                case 3 ->{ //Salir del programa
                     System.out.println("Saliendo del programa.");
                 }
                 default ->{
-                    System.out.println("Esta opción " + op + " no esta disponible.");
+                    System.out.println("Esta opción no esta disponible.");
                 }
             }
             fallos = 0;
@@ -143,7 +145,12 @@ public class TaxiRuedas {
             System.out.println("6. Historial de comentarios.");
             System.out.println("7. Cerrar Sesion");
             System.out.print("Introduce una opción: ");
-            op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            try{
+                op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            }
+            catch(InputMismatchException e){
+                op = 0;
+            }
             switch(op){
                 case 1->{//cambia de zona
                     cambioZona(conexion, u1);
@@ -221,7 +228,12 @@ public class TaxiRuedas {
             System.out.println("7. Lista de comentarios.");
             System.out.println("8. Cerrar Sesion.");
             System.out.print("Introduce una opción: ");
-            op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            try{
+                op = new Scanner(System.in).useLocale(Locale.US).nextInt();
+            }
+            catch(InputMismatchException e){
+                op = 0;
+            }
             switch(op){
                 case 1 ->{//cambiar de zona
                     cambioZona(conexion, u1);
