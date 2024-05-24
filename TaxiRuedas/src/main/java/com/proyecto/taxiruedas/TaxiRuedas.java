@@ -19,8 +19,9 @@ import java.util.Locale;
 import java.util.Scanner;
 
 /**
- *
- * @author usuario
+ * Clase principal del programa de gestion de viaje y reservas
+ * @author Marcos Ruiz Clemente
+ * @version 1.0
  */
 public class TaxiRuedas {
 
@@ -524,6 +525,12 @@ public class TaxiRuedas {
         return e;
     }
     
+    /**
+     * Nos dice cuantos viajes tiene un taxista activo
+     * @param conexion Conexión a la base de datos
+     * @param u1 Taxista sobre el que comprobamos cuantos viajes tiene activos
+     * @return Número de viajes activos, si se hace bien la gestión deberia tener 1 o 0 siempre.
+     */
     public static int viajesActivos(Connection conexion, Taxista u1){
         int sal = 0;
         String sql = String.format("SELECT count(*) FROM viaje WHERE apodo_taxista = ? and finalizado = 0");

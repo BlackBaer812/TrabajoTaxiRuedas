@@ -103,6 +103,10 @@ public class Viaje {
         this.precio = precio;
     }
 
+    /**
+     * Nos dice el ID de un vaije
+     * @return Nos devuelve el ID de un viaje
+     */
     public int getId() {
         return id;
     }

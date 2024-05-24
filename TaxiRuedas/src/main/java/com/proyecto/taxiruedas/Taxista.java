@@ -7,7 +7,7 @@ package com.proyecto.taxiruedas;
 import java.io.Serializable;
 
 /**
- *
+ * Recoge los datos de un taxista
  * @author Marcos
  */
 public class Taxista extends UserTaxi implements Serializable{

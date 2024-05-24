@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Recoge los datos de un comentario
  * @author Marcos
  */
 public class Comentario {
@@ -57,7 +57,7 @@ public class Comentario {
 
     /**
      * Getter de la puntuación que tiene un comentario
-     * @return 
+     * @return Devulve la puntuación del viaje
      */
     public int getPuntuacion() {
         return puntuacion;
@@ -66,7 +66,7 @@ public class Comentario {
     /**
      * Getter del comentario que tiene ese id (opinion de hasta 240 caracteres)
      * Cada 24 caracteres metera un retorno de carro
-     * @return 
+     * @return Devuelve el comentario formateado para que no salga todo en una sola linea
      */
     public String getComentario() {
         String sal = "";

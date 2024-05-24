@@ -5,7 +5,7 @@
 package com.proyecto.taxiruedas;
 
 /**
- *
+ * Clase enumerado del tipo de taxi posible
  * @author usuario
  */
 public enum TipoTaxi {

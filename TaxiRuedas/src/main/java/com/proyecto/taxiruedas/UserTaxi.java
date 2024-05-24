@@ -91,5 +91,9 @@ public abstract class UserTaxi implements Serializable, Comparable{
         return this.apodo.compareTo(((UserTaxi) o).getApodo());
     }
     
+    /**
+     * Metodo abstrabto para implementar en las clases hijas
+     * @return Devuelve que tipo de usuario es (taxista,usuario)
+     */
     public abstract String tipo();
 }
